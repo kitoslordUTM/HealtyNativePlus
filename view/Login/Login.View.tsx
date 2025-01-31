@@ -23,8 +23,6 @@ import { LoginProps } from "./utils.view"
 export default function Login( { handleLogin}:LoginProps ) {
 
 
-
-
   return (
     <Card className="p-5 rounded-lg max-w-[400px] m-4 h-auto  ">
     <Image
