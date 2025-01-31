@@ -11,10 +11,10 @@ export default function LoginScreen() {
   }
 
   return (
-    <View className="bg-[#031B3E] w-full h-full justify-center items-center">
+    
       <Login 
         handleLogin={ handleLogin}
       />
-    </View>
+
   );
 }
