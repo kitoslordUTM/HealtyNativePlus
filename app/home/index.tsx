@@ -1,7 +1,16 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
-
+import { useRouter } from 'expo-router';
+import { Button } from '@/components/ui/button';
 
 export default function HomeScreen() {
+
+  const router = useRouter();
+
+  const handleLogin = () => {
+    router.replace('/app')
+  }
+
+
   return (
     <View style={styles.container}>
 
@@ -12,6 +21,10 @@ export default function HomeScreen() {
       <Text style={styles.title}>Bienvenido a Home!</Text>
 
       
+      <Button onPress={handleLogin} >
+        Login
+      </Button>
+
     </View>
   );
 }
