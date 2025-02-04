@@ -71,7 +71,7 @@ export default function Login({ handleLogin }: LoginProps) {
         className="px-4 py-2 border-outline-300 rounded-xl mb-4 flex-row items-center justify-center" 
       >
         <Image
-          source={require('@/assets/googlePng.jpg')}
+          source={require('@/assets/googleLogo.png')}
           style={style.image}
         />
         <ButtonText size="sm" className="text-typography-600 ml-2"> {/* Added margin to text */}

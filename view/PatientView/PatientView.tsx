@@ -8,11 +8,9 @@ import { VStack } from "@/components/ui/vstack";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Link } from "expo-router";
 
-type PatientListScreenProps = {
-  patient: Patient ;
-};
 
-export default function PatientView ( { patient }: PatientListScreenProps) {
+
+export default function PatientView () {
 
  
   return (
