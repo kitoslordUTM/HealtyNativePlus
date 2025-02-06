@@ -3,12 +3,25 @@ import { Patient } from '../models/patient.model'; // Importa el modelo de pacie
 
 export const patientApi = createApi({
     reducerPath: 'patientApi',
-    baseQuery: fetchBaseQuery({ baseUrl: 'https://apihealtyplus1.onrender.com' }),
+    baseQuery: fetchBaseQuery({ baseUrl: 'https://backhplus.onrender.com' }),
     endpoints: (builder) => ({
-        getPatients: builder.query<Patient[], void>({ // Devuelve un arreglo de pacientes
-            query: () => '/patient/Get',
+        getPatients: builder.query<Patient[], void>({ 
+            query: () => '/Patient/Get',
+        }),
+        
+        postPatient: builder.mutation<void, Partial<Patient>>({ 
+            query: (newPatient) => ({
+                url: '/Patient/Post', 
+                method: 'POST',
+                body: newPatient,
+            }),
         }),
     }),
 });
 
-export const { useGetPatientsQuery } = patientApi;
+
+export const { useGetPatientsQuery, usePostPatientMutation } = patientApi;
+
+
+ 
+

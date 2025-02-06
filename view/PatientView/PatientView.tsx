@@ -1,67 +1,55 @@
-import { Patient } from "@/src/models/patient.model";
-import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
-import { Box } from "@/components/ui/box";
-import { Card } from "@/components/ui/card";
-import { Heading } from "@/components/ui/heading";
-import { Text } from "@/components/ui/text";
-import { VStack } from "@/components/ui/vstack";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Link } from "expo-router";
+import * as Index from './index';
+import { styles } from './style';
+const { 
+  React, 
+  View, 
+  Text, 
+  TextInput, 
+  FlatList, 
+  Image, 
+  TouchableOpacity, 
+  Ionicons, 
+  useGetPatientsQuery, 
+  useRouter, 
+  PatientList, 
+} = Index;
+
+
+// Datos de ejemplo
+// const patients = [
+//   { id: "1", name: "Samantha Powell", age: 21, gender: "Female", image: "https://randomuser.me/api/portraits/women/1.jpg" },
+//   { id: "2", name: "Nathan Harris", age: 34, gender: "Male", image: "https://randomuser.me/api/portraits/men/2.jpg" },
+//   { id: "3", name: "Ava Martínez", age: 45, gender: "Female", image: "https://randomuser.me/api/portraits/women/3.jpg" },
+//   { id: "4", name: "William Johnson", age: 58, gender: "Male", image: "https://randomuser.me/api/portraits/men/4.jpg" },
+// ];
 
 
 
-export default function PatientView () {
+export default function PatientView() {
+  const router = useRouter();
+  const {data}= useGetPatientsQuery()
+  
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Pacientes</Text>
+
+      {/* Barra de búsqueda */}
+      <View style={styles.searchContainer}>
+        <Ionicons name="search-outline" size={20} color="#888" />
+        <TextInput style={styles.searchInput} placeholder="Search patient" placeholderTextColor="#888" />
+      </View>
+
+      {/* Lista de pacientes */}
+      <PatientList
+        data={data || []}
+      />
+
+      {/* Botón de agregar */}
+      <TouchableOpacity style={styles.addButton}>
+        <Ionicons name="add" size={24} color="white" />
+      </TouchableOpacity>
+    </View>
+  );
+}
 
  
-  return (
-    <Card className="p-5 rounded-lg max-w-[360px] m-3 bg-gray-800 shadow-lg">
-
-
-    {/* Contenedor con nombre y avatar */}
-    <Box className="flex-row items-center mb-6">
-      {/* Avatar */}
-      <Avatar className="mr-4">
-        <AvatarFallbackText>RR</AvatarFallbackText>
-        <AvatarImage
-          source={{
-            uri: "https://gluestack.github.io/public-blog-video-assets/john.png",
-          }}
-          alt="image"
-        />
-      </Avatar>
-
-      {/* Nombre del paciente */}
-      <VStack className="flex-grow">
-        <Heading size="md" className="mb-2 text-white text-center">
-          {patient.name}
-        </Heading>
-        <Text size="sm" className="text-gray-500 text-center">
-          {patient.patientid}
-        </Text>
-      </VStack>
-    </Box>
-
-    {/* Información adicional */}
-    <Box className="flex-row justify-between text-gray-300">
-      <VStack>
-        <Heading size="sm" className="mb-1 text-white">
-          Edad: {patient.age}
-        </Heading>
-        <Text size="sm">Genero: {patient.gender}</Text>
-      </VStack>
-    </Box>
-    <Box className="flex-col sm:flex-row">
-
-    <Link href={`/patient/${patient.name}`} className="px-4 py-2 mr-0 mb-3 sm:mr-3 sm:mb-5">
-      Ver
-    </Link>
-
-      <Button className="px-4 py-2 mr-0 mb-3 sm:mr-3 sm:mb-0 sm:flex-1" 
-      >
-        <ButtonText size="sm">Ver paciente</ButtonText>
-      </Button>
-         
-    </Box>
-  </Card>
-  )
-}
