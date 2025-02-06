@@ -6,15 +6,10 @@ import { Button } from '@/components/ui/button';
 export default function LoginScreen() {
   const router = useRouter();
 
-  const handleLogin = () => {
-    router.replace('/home')
-  }
 
   return (
   
-      <Login 
-        handleLogin={ handleLogin}
-      />
+      <Login/>
  
   );
 }

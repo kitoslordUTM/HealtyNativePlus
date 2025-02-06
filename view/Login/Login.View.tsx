@@ -12,9 +12,10 @@ import { Text } from "@/components/ui/text";
 export default function Login() {
   const router = useRouter();
   const [signIn, { isLoading, error }] = useSignInMutation();
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
 
   const handleLogin = async () => {
+    console.log("Enviando credenciales:", credentials);
     try {
       await signIn(credentials).unwrap();
       router.push("/home");
@@ -39,9 +40,9 @@ export default function Login() {
       <VStack className="mb-6 space-y-3">
         <Input variant="outline" size="md" className="rounded-xl bg-white">
           <InputField
-            placeholder="Usuario"
-            value={credentials.username}
-            onChangeText={(text) => setCredentials({ ...credentials, username: text })}
+            placeholder="Correo electrónico"
+            value={credentials.email}
+            onChangeText={(text) => setCredentials({ ...credentials, email: text })}
           />
         </Input>
         <Input className="rounded-xl bg-white">
