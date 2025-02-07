@@ -15,23 +15,13 @@ const {
 } = Index;
 
 
-// Datos de ejemplo
-// const patients = [
-//   { id: "1", name: "Samantha Powell", age: 21, gender: "Female", image: "https://randomuser.me/api/portraits/women/1.jpg" },
-//   { id: "2", name: "Nathan Harris", age: 34, gender: "Male", image: "https://randomuser.me/api/portraits/men/2.jpg" },
-//   { id: "3", name: "Ava Martínez", age: 45, gender: "Female", image: "https://randomuser.me/api/portraits/women/3.jpg" },
-//   { id: "4", name: "William Johnson", age: 58, gender: "Male", image: "https://randomuser.me/api/portraits/men/4.jpg" },
-// ];
-
-
-
 export default function PatientView() {
   const router = useRouter();
   const {data}= useGetPatientsQuery()
   
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Pacientes</Text>
+      <Text style={styles.title}> Mis Pacientes</Text>
 
       {/* Barra de búsqueda */}
       <View style={styles.searchContainer}>
