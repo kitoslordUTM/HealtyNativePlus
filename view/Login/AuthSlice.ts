@@ -3,11 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface AuthState {
   userId: string ;
+  medicId: string;
   // Otros campos si es necesario
 }
 
 const initialState: AuthState = {
   userId: '',
+  medicId: ''
 };
 
 const authSlice = createSlice({
@@ -17,10 +19,13 @@ const authSlice = createSlice({
     setUserId: (state, action) => {
       state.userId = action.payload; // Guardamos el user.id
     },
+    setMedicId: (state, action) =>{
+      state.medicId = action.payload
+    }
     // Otros reducers si es necesario
   },
 });
 
 
-export const { setUserId } = authSlice.actions;
+export const { setUserId, setMedicId } = authSlice.actions;
 export default authSlice.reducer;

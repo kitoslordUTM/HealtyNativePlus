@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // Para iconos
 import { useGetPatientsQuery } from "@/src/services/patient.service";
-import { useRouter } from "expo-router";
+
 import PatientList from "./PatientList";
 
 import { PatientListProps } from "./const";
@@ -24,7 +24,7 @@ export {
     TouchableOpacity,
     Ionicons,
     useGetPatientsQuery,
-    useRouter,
+   
     PatientList,
  
     PatientListProps

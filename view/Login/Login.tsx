@@ -1,5 +1,7 @@
 import * as Index from './index';
 import { TouchableOpacity } from 'react-native';
+import { useDispatch } from "react-redux";
+import { setUserId } from "@/view/Login/AuthSlice";
 
 const {
   useState,
@@ -22,14 +24,20 @@ const {
 
 export default function Login() {
   const router = useRouter();
+  
   const [signIn, { isLoading, error }] = useSignInMutation();
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const dispatch = useDispatch()
+
 
   const handleLogin = async () => {
     console.log("Enviando credenciales:", credentials);
     try {
-      await signIn(credentials).unwrap();
+      const response = await signIn(credentials).unwrap();
       router.push("/home");
+      dispatch(setUserId(response.user.id))
+      console.log(response.user.id)
+
     } catch (err) {
       console.error("Error de autenticación", err);
     }
