@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, StyleSheet, View, TouchableOpacity } from "react-native";
 import { useSignInMutation } from "@/src/services/auth.service";
 import { useRouter } from "expo-router";
 import { Button, ButtonText } from "@/components/ui/button";
@@ -77,9 +77,11 @@ export default function Login() {
       </Button>
       <View className="flex-row justify-center gap-1">
         <Text>¿No tienes una cuenta?</Text>
-        <Text bold={true} className="text-[#007AFF]">
-          Regístrate
-        </Text>
+        <TouchableOpacity onPress={() => router.push("/SignUp")}>
+          <Text bold={true} className="text-[#007AFF]">
+            Regístrate
+          </Text>
+        </TouchableOpacity>
       </View>
     </Card>
   );
