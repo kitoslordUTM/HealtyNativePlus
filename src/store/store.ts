@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { patientApi } from "../services/patient.service";
 import { authApi } from "../services/auth.service";
+import authslice from "@/view/Login/AuthSlice"
 
 
 export const store = configureStore({
   reducer: {
+    authslice: authslice,
     [patientApi.reducerPath]: patientApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
   },

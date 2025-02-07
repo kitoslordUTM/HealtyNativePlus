@@ -1,13 +1,24 @@
-import { useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
-import { useSignInMutation } from "@/src/services/auth.service";
-import { useRouter } from "expo-router";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Heading } from "@/components/ui/heading";
-import { Input, InputField } from "@/components/ui/input";
-import { VStack } from "@/components/ui/vstack";
-import { Text } from "@/components/ui/text";
+import * as Index from './index';
+import { TouchableOpacity } from 'react-native';
+
+const {
+  useState,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  View,
+  useSignInMutation,
+  useRouter,
+  Button,
+  ButtonText,
+  Card,
+  Heading,
+  Input,
+  InputField,
+  VStack,
+  Text,
+
+} = Index;
 
 export default function Login() {
   const router = useRouter();
@@ -77,9 +88,9 @@ export default function Login() {
       </Button>
       <View className="flex-row justify-center gap-1">
         <Text>¿No tienes una cuenta?</Text>
-        <Text bold={true} className="text-[#007AFF]">
-          Regístrate
-        </Text>
+        <TouchableOpacity onPress={() => router.push("/Auth")}>
+          <Text bold={true} className="text-[#007AFF]">Regístrate</Text>
+        </TouchableOpacity>
       </View>
     </Card>
   );
