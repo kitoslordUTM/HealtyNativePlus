@@ -16,12 +16,20 @@ export const patientApi = createApi({
                 body: newPatient,
             }),
         }),
+
+        // Nueva ruta para actualizar un paciente agregando un doctor
+        updatePatientDoctor: builder.mutation<void, { patientId: string; doctor: string }>({
+            query: ({ patientId, doctor }) => ({
+                url: `/Patient/Patch/${patientId}`, 
+                method: 'PATCH',
+                body: { doctor },
+            }),
+        }),
     }),
 });
 
-
-export const { useGetPatientsQuery, usePostPatientMutation } = patientApi;
-
-
- 
-
+export const { 
+    useGetPatientsQuery, 
+    usePostPatientMutation, 
+    useUpdatePatientDoctorMutation 
+} = patientApi;

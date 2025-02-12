@@ -1,23 +1,43 @@
-import { useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
-import { useSignInMutation } from "@/src/services/auth.service";
-import { useRouter } from "expo-router";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Heading } from "@/components/ui/heading";
-import { Input, InputField } from "@/components/ui/input";
-import { VStack } from "@/components/ui/vstack";
-import { Text } from "@/components/ui/text";
+import * as Index from './index';
+import { TouchableOpacity } from 'react-native';
+import { useDispatch } from "react-redux";
+import { setUserId } from "@/view/Login/AuthSlice";
+
+const {
+  useState,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  View,
+  useSignInMutation,
+  useRouter,
+  Button,
+  ButtonText,
+  Card,
+  Heading,
+  Input,
+  InputField,
+  VStack,
+  Text,
+
+} = Index;
 
 export default function Login() {
   const router = useRouter();
+  
   const [signIn, { isLoading, error }] = useSignInMutation();
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const dispatch = useDispatch()
+
 
   const handleLogin = async () => {
+    console.log("Enviando credenciales:", credentials);
     try {
-      await signIn(credentials).unwrap();
+      const response = await signIn(credentials).unwrap();
       router.push("/home");
+      dispatch(setUserId(response.user.id))
+      console.log(response.user.id)
+
     } catch (err) {
       console.error("Error de autenticación", err);
     }
@@ -39,9 +59,9 @@ export default function Login() {
       <VStack className="mb-6 space-y-3">
         <Input variant="outline" size="md" className="rounded-xl bg-white">
           <InputField
-            placeholder="Usuario"
-            value={credentials.username}
-            onChangeText={(text) => setCredentials({ ...credentials, username: text })}
+            placeholder="Correo electrónico"
+            value={credentials.email}
+            onChangeText={(text) => setCredentials({ ...credentials, email: text })}
           />
         </Input>
         <Input className="rounded-xl bg-white">
@@ -76,9 +96,9 @@ export default function Login() {
       </Button>
       <View className="flex-row justify-center gap-1">
         <Text>¿No tienes una cuenta?</Text>
-        <Text bold={true} className="text-[#007AFF]">
-          Regístrate
-        </Text>
+        <TouchableOpacity onPress={() => router.push("/Auth")}>
+          <Text bold={true} className="text-[#007AFF]">Regístrate</Text>
+        </TouchableOpacity>
       </View>
     </Card>
   );
