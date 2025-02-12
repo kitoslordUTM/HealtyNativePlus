@@ -9,6 +9,7 @@ import { useAddPatientsToDoctorMutation } from '@/src/services/medic.service'; /
 import { PatientListProps } from './const';
 import * as Index from './index';
 import { StyleSheet } from 'react-native';
+import { useUpdatePatientDoctorMutation } from '@/src/services/patient.service';
 
 const { Ionicons, FlatList } = Index;
 
@@ -22,6 +23,8 @@ export default function PatientList({ data }: PatientListProps) {
 
   // Configurar el hook para la mutación
   const [addPatientsToDoctor] = useAddPatientsToDoctorMutation();
+
+  const [addDoctorToPatient] = useUpdatePatientDoctorMutation()
 
   const handlePress = (item: Patient) => {
     setSelectedPatient(item);
@@ -53,6 +56,14 @@ export default function PatientList({ data }: PatientListProps) {
         doctorId,
         pacientes: [selectedPatient._id],
       }).unwrap();
+
+      await addDoctorToPatient({
+        patientId: selectedPatient._id,
+        doctor: doctorId,  // Usar doctorId en lugar de doctor
+      }).unwrap();
+      
+
+
 
       setIsModalVisible(false);
       Alert.alert("Éxito", "Paciente añadido correctamente.");
