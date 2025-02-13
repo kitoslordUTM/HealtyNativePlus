@@ -1,102 +1,108 @@
-import { Box } from "@/components/ui/box"
-import { Button, ButtonText } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Heading } from "@/components/ui/heading"
-import { Image } from "react-native"
-import { Text } from "@/components/ui/text"
-import {
-  FormControl,
-  FormControlError,
-  FormControlErrorText,
-  FormControlErrorIcon,
-  FormControlLabel,
-  FormControlLabelText,
-  FormControlHelper,
-  FormControlHelperText,
-} from "@/components/ui/form-control"
-import { Input, InputField } from "@/components/ui/input"
-import { VStack } from "@/components/ui/vstack"
-import { StyleSheet } from "react-native" 
-import { LoginProps } from "./utils.view"
+import * as Index from './index';
+import { TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { useDispatch } from "react-redux";
+import { setUserId } from "@/view/Login/AuthSlice";
 
+const {
+  useState,
+  ActivityIndicator,
+  View,
+  useSignInMutation,
+  useRouter,
+  Button,
+  ButtonText,
+  Card,
+  Heading,
+  Input,
+  InputField,
+  VStack,
+  Text,
+} = Index;
 
-export default function Login( { handleLogin}:LoginProps ) {
+export default function Login() {
+  const router = useRouter();
+  const [signIn, { isLoading, error }] = useSignInMutation();
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const dispatch = useDispatch();
 
-
-
+  const handleLogin = async () => {
+    try {
+      const response = await signIn(credentials).unwrap();
+      router.push("/home");
+      dispatch(setUserId(response.user.id));
+    } catch (err) {
+      console.error("Error de autenticación", err);
+    }
+  };
 
   return (
-    <Card className="p-5 rounded-lg max-w-[400px] m-4 h-auto  ">
-    <Image
-      source={require('@/assets/login.png')}
-      className="mb-6 h-[240px] w-[300px] rounded-md aspect-[4/3]"
-      alt="image"
-    />
-   
-    <VStack className="mb-6">
+    <View className="flex-1 bg-white">
+      {/* Sección superior con fondo azul oscuro */}
+      <View className="bg-[#0A2240] h-1/3 w-full items-center justify-center">
+        <Text className="text-white text-9xl font-bold">H+</Text>
+        <Text className="text-white text-4xl font-bold mt-6">HEALTHY +</Text>
+      </View>
       
-        <Input
-        variant="outline"
-        size="md"
-        isDisabled={false}
-        isInvalid={false}
-        isReadOnly={false}
-        className="mb-3 rounded-xl"
-      >
-        <InputField placeholder="Correo electrónico" />
-      </Input>
-
-    
-      <Input className="my-1  rounded-xl"  >
-        <InputField
-          type="password"
-          placeholder="password"
-          />
-      </Input>
-
-    </VStack>
-
-    <Box className="flex-col sm:flex-row">
-      <Button  
-      onPress={handleLogin}
-      className="px-4 py-2 mr-0 mb-3 sm:mr-3 sm:mb-0 sm:flex-1 rounded-xl" >
-        <ButtonText size="sm">Sign In</ButtonText>
-      </Button>
-      <Button
-        variant="outline"
-        className="px-4 py-2 border-outline-300 sm:flex-1  rounded-xl mb-2"
-      >
-        <ButtonText size="sm" className="text-typography-600 ">
-          Sign In with Google
-        </ButtonText>
-        
-        <Image
-        source={require('@/assets/googlePng.jpg')}
-        style={style.image}
-        />
-
-
-      </Button>
-
-      <Box className="flex-row gap-1 mt-1 mb-6">
-      <Text>
-        Don't have an account?
-      </Text>
-
-      <Text bold={true}  >
-        Sign up
-      </Text>
-
-      </Box>
-    </Box>
-  </Card>
-  )
+      {/* Sección del formulario */}
+      <View className="flex-1 items-center justify-center px-6">
+        <Card className="p-5 rounded-lg max-w-[400px] w-full shadow-lg">
+          <Heading size="xl" className="text-center mb-4 font-bold">
+            Hola, Doctor
+          </Heading>
+          <VStack className="mb-6 space-y-3">
+            <Input variant="outline" size="md" className="rounded-xl bg-white">
+              <InputField
+                placeholder="Correo electrónico"
+                value={credentials.email}
+                onChangeText={(text) => setCredentials({ ...credentials, email: text })}
+              />
+            </Input>
+            <Input className="rounded-xl bg-white">
+              <InputField
+                type="password"
+                placeholder="Contraseña"
+                value={credentials.password}
+                onChangeText={(text) => setCredentials({ ...credentials, password: text })}
+              />
+            </Input>
+          </VStack>
+          {error && (
+            <Text className="text-red-500 text-center mb-2">Credenciales incorrectas</Text>
+          )}
+          <Button onPress={handleLogin} className="px-4 py-2 mb-4 rounded-xl bg-[#007AFF] w-full" disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <ButtonText size="sm" className="text-white">Iniciar Sesión</ButtonText>
+            )}
+          </Button>
+          <View className="flex-row items-center justify-center mb-6">
+            <View className="w-1/4 h-[1px] bg-gray-300"></View>
+            <Text className="mx-3 text-gray-500">o</Text>
+            <View className="w-1/4 h-[1px] bg-gray-300"></View>
+          </View>
+          <Button variant="outline" className="px-4 py-2 border-outline-300 rounded-xl mb-4 flex-row items-center justify-center">
+            <Image source={require("@/assets/googleLogo.png")} style={styles.image} />
+            <ButtonText size="sm" className="text-typography-600 ml-2">
+              Iniciar sesión con Google
+            </ButtonText>
+          </Button>
+          <View className="flex-row justify-center gap-1">
+            <Text>¿No tienes una cuenta?</Text>
+            <TouchableOpacity onPress={() => router.push("/SignUp")}>
+              <Text bold={true} className="text-[#007AFF]">Regístrate</Text>
+            </TouchableOpacity>
+          </View>
+        </Card>
+      </View>
+    </View>
+  );
 }
 
-
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   image: {
-    width: 15
-    , height: 15
-  }
+    width: 20,
+    height: 20,
+    marginRight: 5,
+  },
 });

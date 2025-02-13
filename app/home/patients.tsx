@@ -1,14 +1,9 @@
-import { View, Text, StyleSheet } from 'react-native';
+ import PatientView from "@/view/PatientView/PatientView"
+
+
 
 export default function patients() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bienvenido a Paciente!</Text>
-    </View>
-  );
+   <PatientView/>
+  )
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 24 },
-});
