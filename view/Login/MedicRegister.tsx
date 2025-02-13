@@ -82,7 +82,7 @@ const MedicRegister = () => {
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => router.push("./index")}> 
+        <TouchableOpacity style={styles.button} onPress={() => router.push("")}>
           <Text style={styles.buttonText}>CREAR CUENTA</Text>
         </TouchableOpacity>
       </View>

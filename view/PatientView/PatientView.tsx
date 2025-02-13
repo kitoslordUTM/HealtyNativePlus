@@ -1,5 +1,6 @@
 import * as Index from './index';
 import { styles } from './style';
+import { useRouter } from "expo-router";
 const { 
   React, 
   View, 
@@ -9,25 +10,21 @@ const {
   Image, 
   TouchableOpacity, 
   Ionicons, 
-  useGetPatientsQuery, 
-  useRouter, 
+ 
+  
   PatientList, 
 } = Index;
-
-
-// Datos de ejemplo
-// const patients = [
-//   { id: "1", name: "Samantha Powell", age: 21, gender: "Female", image: "https://randomuser.me/api/portraits/women/1.jpg" },
-//   { id: "2", name: "Nathan Harris", age: 34, gender: "Male", image: "https://randomuser.me/api/portraits/men/2.jpg" },
-//   { id: "3", name: "Ava Martínez", age: 45, gender: "Female", image: "https://randomuser.me/api/portraits/women/3.jpg" },
-//   { id: "4", name: "William Johnson", age: 58, gender: "Male", image: "https://randomuser.me/api/portraits/men/4.jpg" },
-// ];
-
+ import { useGetPatientsByDoctorIdQuery } from '@/src/services/medic.service';
+ import { useSelector } from 'react-redux';
+import { RootState } from '@/src/store/store';
 
 
 export default function PatientView() {
+
+  const doctorId = useSelector((state: RootState) => state.authslice.medicId); 
+
   const router = useRouter();
-  const {data}= useGetPatientsQuery()
+  const {data} = useGetPatientsByDoctorIdQuery( doctorId)
   
   return (
     <View style={styles.container}>
@@ -45,7 +42,13 @@ export default function PatientView() {
       />
 
       {/* Botón de agregar */}
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => {
+          console.log("Navegando a /medic"); // Depuración
+          router.push("/medic");
+        }}
+      >
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
     </View>
