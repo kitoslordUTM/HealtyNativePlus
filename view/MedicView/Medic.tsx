@@ -1,10 +1,8 @@
- import { View } from 'react-native';
- 
+import { View } from 'react-native';
 import {styles} from './style' 
 import { Patient } from "@/src/models/patient.model"
 import React from "react";
-import { 
-    
+import {    
     Text, 
     TextInput, 
     FlatList, 
@@ -14,15 +12,21 @@ import {
 import { Ionicons } from "@expo/vector-icons"; // Para iconos
 import { useGetPatientsQuery } from "@/src/services/patient.service";
 import { PatientList } from "../PatientView";
-
+import { useRouter } from "expo-router";
 
  
 export default function Medic() {
-  const {data: fetchedData} = useGetPatientsQuery()
-  
+  const {data: fetchedData, refetch} = useGetPatientsQuery()
+  const router = useRouter();
+
   return (
      <View style={styles.container}>
-           <Text style={styles.title}>Buscar pacientes</Text>
+
+      <TouchableOpacity onPress={() => router.push("/home/patients")} className="absolute top-6 left-4 sm:top-10 sm:left-10">
+        <Text className="text-black text-3xl   bottom-3">←</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.title}>Buscar pacientes</Text>
      
      {/* Barra de búsqueda */}
      <View style={styles.searchContainer}>
@@ -32,8 +36,9 @@ export default function Medic() {
 
      {/* Lista de pacientes */}
      <PatientList
-       data={fetchedData || []}
-     />
+        data={(fetchedData || []).filter(patient => !patient.doctor)}
+        refetch={refetch}
+      />
      </View>
   )
 }

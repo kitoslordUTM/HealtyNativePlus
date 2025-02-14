@@ -24,11 +24,12 @@ export default function PatientView() {
   const doctorId = useSelector((state: RootState) => state.authslice.medicId); 
 
   const router = useRouter();
-  const {data} = useGetPatientsByDoctorIdQuery( doctorId)
+  const {data, refetch} = useGetPatientsByDoctorIdQuery( doctorId)
   
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Pacientes</Text>
+
+      <Text style={styles.title}>Mis pacientes</Text>
 
       {/* Barra de búsqueda */}
       <View style={styles.searchContainer}>
@@ -39,13 +40,13 @@ export default function PatientView() {
       {/* Lista de pacientes */}
       <PatientList
         data={data || []}
+        refetch={refetch}
       />
 
       {/* Botón de agregar */}
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => {
-          console.log("Navegando a /medic"); // Depuración
           router.push("/medic");
         }}
       >

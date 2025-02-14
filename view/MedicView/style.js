@@ -8,9 +8,11 @@ export const styles = StyleSheet.create({
       padding: 16,
     },
     title: {
-      fontSize: 24,
-      fontWeight: "bold",
-      marginBottom: 16,
+      fontSize: 30,
+      fontWeight: 'bold',
+      color: '#000',
+      marginTop: 27,
+      marginBottom:10
     },
     searchContainer: {
       flexDirection: "row",

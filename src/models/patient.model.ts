@@ -10,6 +10,7 @@ export type Patient = {
   direction: string;
   condition: string;
   user: string
+  doctor?: string
   // createdAt?: Date; // Generado automáticamente por `timestamps: true`
   // updatedAt?: Date; // Generado automáticamente por `timestamps: true`
 };
