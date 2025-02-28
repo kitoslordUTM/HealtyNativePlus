@@ -13,8 +13,6 @@ const {
 } = Index
 
 
-
- 
  export default function SettingsView() {
     const [profileImage, setProfileImage] = useState(require('../../assets/perfil.jpg')); 
   const pickImage = async () => {

@@ -1,5 +1,6 @@
 import * as Index from './index';
 import { styles } from './style';
+import { useRouter } from "expo-router";
 const { 
   React, 
   View, 
@@ -9,29 +10,73 @@ const {
   Image, 
   TouchableOpacity, 
   Ionicons, 
-  useGetPatientsQuery, 
-  useRouter, 
+ 
   PatientList, 
 } = Index;
-
-
-// Datos de ejemplo
-// const patients = [
-//   { id: "1", name: "Samantha Powell", age: 21, gender: "Female", image: "https://randomuser.me/api/portraits/women/1.jpg" },
-//   { id: "2", name: "Nathan Harris", age: 34, gender: "Male", image: "https://randomuser.me/api/portraits/men/2.jpg" },
-//   { id: "3", name: "Ava Martínez", age: 45, gender: "Female", image: "https://randomuser.me/api/portraits/women/3.jpg" },
-//   { id: "4", name: "William Johnson", age: 58, gender: "Male", image: "https://randomuser.me/api/portraits/men/4.jpg" },
-// ];
-
-
+import { useGetPatientsByDoctorIdQuery } from '@/src/services/medic.service'; 
+import { useState } from 'react';
+import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Button, ButtonText } from "@/components/ui/button";
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/src/store/store';
+import { setOpen } from './PatientSlice';
 
 export default function PatientView() {
+  const SelectedModal = useSelector((state: RootState) => state.modalSlice.open);
+  const dispatch = useDispatch();
+
+  const [doctorId, setDoctorId] = useState<string>('');
+  
+  useEffect(() => {
+    const fetchDoctorId = async () => {
+      try {
+        const storedDoctorId = await AsyncStorage.getItem("medicId");
+        if (storedDoctorId) {
+          setDoctorId(storedDoctorId);
+          console.log("Doctor ID set:", storedDoctorId);
+        }
+      } catch (error) {
+        console.error("Error al recuperar el ID del doctor:", error);
+      }
+    };
+    fetchDoctorId();
+  }, []);
+
   const router = useRouter();
-  const {data}= useGetPatientsQuery()
+  const { data, refetch } = useGetPatientsByDoctorIdQuery(doctorId, {
+    skip: !doctorId, // Evita la consulta hasta que doctorId esté definido
+  });
+
+  useEffect(() => {
+    if (doctorId) {
+      refetch();
+      console.log("Refetching patients for doctor ID:", doctorId);
+    }
+  }, [doctorId]);
+
+
+  const VitalButton = (
+    <>
+      <Button
+        onPress={() => {
+          
+          router.push("/Vital"); // Navega a la pantalla de signos vitales
+          dispatch(setOpen(false));
+          
+        }}
+      >
+        <ButtonText size="sm">Ver signos vitales</ButtonText>
+      </Button>
+    </>
+  );
+  
+
   
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Pacientes</Text>
+
+      <Text style={styles.title}>Mis pacientes</Text>
 
       {/* Barra de búsqueda */}
       <View style={styles.searchContainer}>
@@ -40,16 +85,29 @@ export default function PatientView() {
       </View>
 
       {/* Lista de pacientes */}
-      <PatientList
-        data={data || []}
-      />
+     { (data ?? []).length > 0 ? (
+       <PatientList
+       data={data || []}
+       refetch={refetch}
+       button ={ VitalButton }
+     />
+     ) :
+     (
+        <Text  >No tienes pacientes asignados</Text>
+     )
+     }
 
       {/* Botón de agregar */}
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => {
+          router.push("/medic");
+        }}
+      >
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
     </View>
   );
 }
 
- 
+

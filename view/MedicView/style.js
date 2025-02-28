@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
       fontSize: 30,
       fontWeight: 'bold',
       color: '#000',
-      marginTop: 20,
+      marginTop: 27,
       marginBottom:10
     },
     searchContainer: {
