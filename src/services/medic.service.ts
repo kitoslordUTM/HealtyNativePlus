@@ -24,7 +24,7 @@ export const medicApi = createApi({
 
     // Nueva ruta agregada
     getPatientsByDoctorId: builder.query<Patient[], string>({
-      query: (medicId) => `/Medic/Get/${medicId}/Patients`, // Ruta nueva
+      query: (doctorId) => `/Medic/Get/${doctorId}/Patients`, // Ruta nueva
     }),
   }),
 });

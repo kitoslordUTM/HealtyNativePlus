@@ -9,6 +9,8 @@ import { Card } from "@/components/ui/card";
 import { VStack } from "@/components/ui/vstack";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 interface Doctor {
   name: string;
@@ -23,7 +25,31 @@ interface Doctor {
 }
 
 export default function MedicRegistrer() {
-  const userId = useSelector((state: RootState) => state.authslice.userId);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem("userId");
+        console.log("User ID recuperado de AsyncStorage:", storedUserId); // Verifica que se recupera
+        if (storedUserId) {
+          setUserId(storedUserId);
+          setDoctor((prevDoctor) => ({
+            ...prevDoctor,
+            user: storedUserId, // Asegurar que se actualiza en doctor
+          }));
+        }
+      } catch (err) {
+        console.error("Error al recuperar userId", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserId();
+  }, []);
+  
+
   const router = useRouter();
   const [registerDoctor, { isLoading, error }] = useRegisterDoctorMutation();
   const [doctor, setDoctor] = useState<Doctor>({
@@ -38,15 +64,20 @@ export default function MedicRegistrer() {
     pacientes: [],
   });
 
-  const handleRegisterDoctor = async () => {
-    try {
-      const response = await registerDoctor(doctor).unwrap();
-      console.log("Doctor registrado:", response);
-      router.push("/home");
-    } catch (err) {
-      console.error("Error al registrar el doctor:", err);
-    }
-  };
+ const handleRegisterDoctor = async () => {
+  if (!doctor.user) {
+    console.error("Error: El userId no está definido en doctor");
+    return;
+  }
+
+  try {
+    const response = await registerDoctor(doctor).unwrap();
+    console.log("Doctor registrado:", response);
+    router.push("/home");
+  } catch (err) {
+    console.error("Error al registrar el doctor:", err);
+  }
+};
 
   const fields: { placeholder: string; key: keyof Doctor; keyboardType?: KeyboardTypeOptions }[] = [
     { placeholder: "Nombre", key: "name" },

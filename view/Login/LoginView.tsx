@@ -2,6 +2,7 @@ import * as Index from './index';
 import { TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useDispatch } from "react-redux";
 import { setUserId } from "@/view/Login/AuthSlice";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {
   useState,
@@ -23,13 +24,18 @@ export default function Login() {
   const router = useRouter();
   const [signIn, { isLoading, error }] = useSignInMutation();
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const dispatch = useDispatch();
+ 
 
   const handleLogin = async () => {
     try {
       const response = await signIn(credentials).unwrap();
+      const userId = response.user.id;
+    
+      // Guardar userId en AsyncStorage
+      await AsyncStorage.setItem("userId", userId || '');
+      console.log("User ID:", userId);
       router.push("/home");
-      dispatch(setUserId(response.user.id));
+       
     } catch (err) {
       console.error("Error de autenticación", err);
     }

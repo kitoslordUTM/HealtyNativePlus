@@ -8,6 +8,7 @@ import { Text } from "@/components/ui/text";
 import { useDispatch } from "react-redux";
 import { setUserId } from "@/view/Login/AuthSlice";
 import { Heading } from "@/components/ui/heading";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Auth() {
   const router = useRouter();
@@ -15,13 +16,16 @@ export default function Auth() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useDispatch();
+  const [userId, setUserId] = useState("");
+ 
 
   const handleRegister = async () => {
     try {
       const response = await signUp(credentials).unwrap();
       if (response.user && response.user.id) {
-        dispatch(setUserId(response.user.id));
+        await AsyncStorage.setItem("userId", response.user.id);
+        console.log("User ID guardado en AsyncStorage:", response.user.id); // Verifica que se guarda
+        setUserId(response.user.id);
         setSuccessMessage("Cuenta creada exitosamente");
         setTimeout(() => router.push("./RegistrerMedic"), 1500);
       }

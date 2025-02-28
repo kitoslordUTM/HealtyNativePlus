@@ -1,9 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Patient } from '@/src/models/patient.model';
-import { useRouter } from "expo-router";
 import { Modal, View, TouchableOpacity, Alert, StyleSheet } from "react-native";
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/src/store/store';
 import { useAddPatientsToDoctorMutation } from '@/src/services/medic.service';
 import { PatientListProps } from './const';
@@ -16,47 +14,61 @@ import { Heading } from "@/components/ui/heading";
 import { Image } from "@/components/ui/image";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setOpen } from './PatientSlice';
 
 const { Ionicons, FlatList } = Index;
 
-export default function PatientList({ data, refetch }: PatientListProps) {
-  const router = useRouter();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+export default function PatientList({ data, refetch, button }: PatientListProps) {
+  const SelectedModal = useSelector((state: RootState) => state.modalSlice.open);
+  const dispatch = useDispatch();
 
-  const doctorId = useSelector((state: RootState) => state.authslice.medicId);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [doctorId, setDoctorId] = useState<string>('');
+
+  useEffect(() => {
+    const fetchDoctorId = async (): Promise<void> => {
+      try {
+        const storedDoctorId = await AsyncStorage.getItem("medicId");
+        setDoctorId(storedDoctorId || '');
+      } catch (error) {
+        console.error("Error al recuperar el ID del doctor:", error);
+      }
+    };
+    fetchDoctorId();
+  }, []);
+
   const [addPatientsToDoctor] = useAddPatientsToDoctorMutation();
   const [addDoctorToPatient] = useUpdatePatientDoctorMutation();
 
-  const handlePress = (item: Patient) => {
+  const handlePress = async (item: Patient) => {
     setSelectedPatient(item);
-    console.log(item)
-    setIsModalVisible(true);
+    try {
+      await AsyncStorage.setItem("selectedPatientId", item._id || '');
+    } catch (error) {
+      console.error("Error al guardar el ID del paciente en AsyncStorage:", error);
+    }
+    dispatch(setOpen(true));
   };
 
   const handleAddPatient = async () => {
     if (!doctorId) {
-      console.error("Error: El ID del doctor no está definido.");
       Alert.alert("Error", "No se pudo obtener la información del doctor.");
       return;
     }
 
     if (!selectedPatient || !selectedPatient._id) {
-      console.error("Error: El paciente seleccionado no es válido.");
       Alert.alert("Error", "Por favor, seleccione un paciente válido.");
       return;
     }
 
     try {
-      console.log(`Enviando datos: DoctorID=${doctorId}, PacienteID=${selectedPatient._id}`);
       await addPatientsToDoctor({ doctorId, pacientes: [selectedPatient._id] }).unwrap();
       await addDoctorToPatient({ patientId: selectedPatient._id, doctor: doctorId }).unwrap();
-      refetch()
+      refetch();
       Alert.alert("Éxito", "Paciente añadido correctamente.");
-      setIsModalVisible(false);
-
+      dispatch(setOpen(false));
     } catch (error) {
-      console.error("Error al agregar el paciente:", error);
       Alert.alert("Error", "Hubo un problema al añadir el paciente.");
     }
   };
@@ -65,7 +77,7 @@ export default function PatientList({ data, refetch }: PatientListProps) {
     <View>
       <FlatList
         data={data}
-        keyExtractor={(item) => item._id || ''}
+        keyExtractor={(item) => item._id || Math.random().toString()}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.patientItem} onPress={() => handlePress(item)}>
             <View style={styles.patientInfo}>
@@ -76,9 +88,8 @@ export default function PatientList({ data, refetch }: PatientListProps) {
           </TouchableOpacity>
         )}
       />
-
       {selectedPatient && (
-        <Modal animationType="slide" transparent={true} visible={isModalVisible} onRequestClose={() => setIsModalVisible(false)}>
+        <Modal animationType="slide" transparent={true} visible={SelectedModal} onRequestClose={() => dispatch(setOpen(false))}>
           <View style={styles.modalOverlay}>
             <Card className="p-5 rounded-lg max-w-[360px] m-3 bg-white">
               <Image source={{ uri: 'https://gluestack.github.io/public-blog-video-assets/saree.png' }} className="mb-6 h-[240px] w-full rounded-md aspect-[4/3]" alt="image" />
@@ -90,13 +101,13 @@ export default function PatientList({ data, refetch }: PatientListProps) {
                 <Text size="sm">Condición: {selectedPatient.condition}</Text>
                 <Text size="sm">Teléfono: {selectedPatient.telephone}</Text>
                 <Text size="sm">Dirección: {selectedPatient.direction}</Text>
-               
               </VStack>
               <Box className="flex-col sm:flex-row">
                 <Button className="px-4 py-2 mr-0 mb-3 sm:mr-3 sm:mb-0 sm:flex-1" onPress={handleAddPatient}>
                   <ButtonText size="sm">Añadir Paciente</ButtonText>
                 </Button>
-                <Button variant="outline" className="px-4 py-2 border-outline-300 sm:flex-1" onPress={() => setIsModalVisible(false)}>
+                {button}
+                <Button variant="outline" className="px-4 py-2 border-outline-300 sm:flex-1" onPress={() => dispatch(setOpen(false))}>
                   <ButtonText size="sm" className="text-typography-600">Cerrar</ButtonText>
                 </Button>
               </Box>

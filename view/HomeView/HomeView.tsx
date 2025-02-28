@@ -5,36 +5,61 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/src/store/store';
 import { setMedicId } from '../Login/AuthSlice';
 import { useEffect } from 'react';
+import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeView() {
-  const dispatch = useDispatch();
+ 
+  const [userId, setUserId] = useState("");
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem("userId");
+        console.log("User ID recuperado de AsyncStorage:", storedUserId); // Verifica que se recupera
+        if (storedUserId) {
+            setUserId(storedUserId);
+        }
+      } catch (err) {
+        console.error("Error al recuperar userId", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserId();
+  }, []);
 
-  const userId = useSelector((state: RootState) => state.authslice.userId);
   const { data } = useGetDoctorByUserIdQuery(userId);
 
   useEffect(() => {
-    if (data?._id) {
-      dispatch(setMedicId(data._id));
-      console.log("Doctor ID set:", data._id);
-    }
-  }, [data, dispatch]); // Se ejecuta solo cuando 'data' cambia
+    const storeMedicId = async () => {
+      if (data?._id) {
+        const medicId = data._id;
+        await AsyncStorage.setItem("medicId", medicId || '');
+        console.log("Medic ID set:", medicId);
+      }
+    };
+    storeMedicId();
+  }, [data]); // Se ejecuta solo cuando 'data' cambia
+
+  const patientNumber = data?.pacientes?.length || 0; 
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.TittleCenter}>Hola {data?.name}</Text>
-
       <Image source={require('@/assets/image413.png')} style={styles.image} />
-
       {/* Sección de estadísticas */}
       <View style={styles.statsContainer}>
         <View style={styles.statBox}>
           <Text style={styles.statLabel}>Pacientes</Text>
-          <Text style={styles.statValue}>1,000</Text>
+          <Text style={styles.statValue}>{patientNumber}</Text>
         </View>
         <View style={styles.row}>
           <View style={styles.smallBox}>
             <Text style={styles.statLabel}>Alertas</Text>
-            <Text style={styles.statValue}>10</Text>
+            <Text style={styles.statValue}>{data?.pacientes?.length}</Text>
           </View>
           <View style={styles.smallBox}>
             <Text style={styles.statLabel}>Notificaciones</Text>
@@ -42,7 +67,6 @@ export default function HomeView() {
           </View>
         </View>
       </View>
-
       {/* Opciones de navegación */}
       <View style={styles.linksContainer}>
         <TouchableOpacity style={styles.link}>

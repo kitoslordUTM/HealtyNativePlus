@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons"; // Para iconos
 import { useGetPatientsQuery } from "@/src/services/patient.service";
 import { PatientList } from "../PatientView";
 import { useRouter } from "expo-router";
+import { ScrollView } from 'react-native';
 
  
 export default function Medic() {
@@ -25,7 +26,7 @@ export default function Medic() {
       <TouchableOpacity onPress={() => router.push("/home/patients")} className="absolute top-6 left-4 sm:top-10 sm:left-10">
         <Text className="text-black text-3xl   bottom-3">←</Text>
       </TouchableOpacity>
-
+      
       <Text style={styles.title}>Buscar pacientes</Text>
      
      {/* Barra de búsqueda */}
@@ -34,11 +35,14 @@ export default function Medic() {
        <TextInput style={styles.searchInput} placeholder="Search patient" placeholderTextColor="#888" />
      </View>
 
+    <ScrollView>
      {/* Lista de pacientes */}
      <PatientList
         data={(fetchedData || []).filter(patient => !patient.doctor)}
         refetch={refetch}
       />
+
+    </ScrollView>
      </View>
   )
 }
