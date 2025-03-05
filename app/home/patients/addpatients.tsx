@@ -1,4 +1,4 @@
-import Medic from "@/view/MedicView/Medic"
+import Medic from "@/view/Medic/Medic"
 
 export default function index() {
   return (

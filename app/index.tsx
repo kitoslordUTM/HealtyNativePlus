@@ -1,4 +1,4 @@
-import Login from '@/view/Login/LoginView';
+import Login from '@/view/Login/Login';
 
 export default function LoginScreen() {
 

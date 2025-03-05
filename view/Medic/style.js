@@ -75,5 +75,12 @@ export const styles = StyleSheet.create({
         color: "#666",
       },
 
+      modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        
+      },
+
   });
   

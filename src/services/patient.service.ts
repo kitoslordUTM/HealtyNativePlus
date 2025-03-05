@@ -25,11 +25,18 @@ export const patientApi = createApi({
                 body: { doctor },
             }),
         }),
+
+
+        getPatientByUserID : builder.query <Patient[], void>({ 
+            query: (patientId) => `/Patient/User/${patientId} `,
+        }),
+
     }),
 });
 
 export const { 
     useGetPatientsQuery, 
     usePostPatientMutation, 
-    useUpdatePatientDoctorMutation 
+    useUpdatePatientDoctorMutation ,
+    useGetPatientByUserIDQuery
 } = patientApi;

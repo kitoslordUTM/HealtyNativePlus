@@ -3,20 +3,21 @@ import { useRouter } from "expo-router";
 import { useSignUpMutation } from "@/src/services/auth.service";
 import { ActivityIndicator, View, TextInput, TouchableOpacity } from "react-native";
 import { Button, ButtonText } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import Toast from "react-native-toast-message";
 import { Text } from "@/components/ui/text";
-import { useDispatch } from "react-redux";
-import { setUserId } from "@/view/Login/AuthSlice";
 import { Heading } from "@/components/ui/heading";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import StyleSheet from 'react-native-media-query';
+import { ImageBackground } from "react-native";
+import MedicRegistrer from "./MedicRegistrer";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function Auth() {
   const router = useRouter();
   const [signUp, { isLoading, error }] = useSignUpMutation();
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [userId, setUserId] = useState("");
+  const [ userId, setUserId] = useState<string>('') 
  
 
   const handleRegister = async () => {
@@ -24,56 +25,189 @@ export default function Auth() {
       const response = await signUp(credentials).unwrap();
       if (response.user && response.user.id) {
         await AsyncStorage.setItem("userId", response.user.id);
-        console.log("User ID guardado en AsyncStorage:", response.user.id); // Verifica que se guarda
-        setUserId(response.user.id);
-        setSuccessMessage("Cuenta creada exitosamente");
-        setTimeout(() => router.push("./RegistrerMedic"), 1500);
+        setUserId(response.user.id)
+        console.log(response.user.id)
+
+        Toast.show({
+          type: 'success',
+          text1: 'Exito',
+          text2: 'Exito al registrar tu correo electrónico 👋'
+        });
+
+       
       }
     } catch (err) {
       console.error("Error en el registro:", err);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Error al registrar tu correo electrónico 👋'
+      });
     }
   };
 
-  return (
-    <View className="flex-1 justify-center items-center bg-[#0A1F44] p-4 sm:p-10">
-      <TouchableOpacity onPress={() => router.push("")} className="absolute top-6 left-4 sm:top-10 sm:left-10">
-        <Text className="text-white text-lg">← </Text>
-      </TouchableOpacity>
-
-      <Card className="p-6 rounded-3xl w-full max-w-md bg-white shadow-lg">
-        <Heading className="text-center text-2xl font-bold text-[#0A1F44] mb-4">
+  const renderSignUp = () => 
+  (
+    <>
+      <View  style={styles.container} dataSet={{media: ids.container}}>     
+        <Heading style={{ alignSelf:'center', color: '#0A2240', padding: 15, fontSize: 25}}>
           Registrate
         </Heading>
-     
+    
         <TextInput
-          className="w-full p-3 border rounded-xl border-gray-300 mb-3 bg-gray-100"
-          placeholder="Correo electrónico"
+          style={styles.input}
+          dataSet={{media: ids.input}}
+        
+          placeholder="Ejemplo@gmail.com"
+          placeholderTextColor="#0A2240"
           value={credentials.email}
           onChangeText={(text) => setCredentials({ ...credentials, email: text })}
         />
-        <View className="relative w-full">
+        <View  style={styles.password} dataSet={{media: ids.password}}>
           <TextInput
-            className="w-full p-3 pr-12 border rounded-xl border-gray-300 mb-3 bg-gray-100"
             placeholder="Contraseña"
+            style={{padding: 15, width:'85%', borderTopStartRadius: 20, borderBottomStartRadius: 20,  }}
             secureTextEntry={!showPassword}
             value={credentials.password}
             onChangeText={(text) => setCredentials({ ...credentials, password: text })}
           />
           <TouchableOpacity
             onPress={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-4"
+      
           >
-            <Text className="text-[#007AFF] text-sm font-bold">{showPassword ? "Ocultar" : "Ver"}</Text>
+            <Text style={{ marginTop:12   }} >{showPassword ? "Ocultar" : "Ver"}</Text>
           </TouchableOpacity>
         </View>
+        <TouchableOpacity onPress={handleRegister}   disabled={isLoading} style={styles.button}  >
+          {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={{color:"#fff", alignSelf:'center'}} >CREAR CUENTA</Text>}
+        </TouchableOpacity>
+      </View>
+    </>
+  );
 
-        {error && <Text className="text-red-500 text-center mb-2">Error en el registro</Text>}
-        {successMessage && <Text className="text-green-600 text-center mb-2">{successMessage}</Text>}
 
-        <Button onPress={handleRegister} className="w-full p-3 rounded-xl bg-[#007AFF] mt-4" disabled={isLoading}>
-          {isLoading ? <ActivityIndicator color="#fff" /> : <ButtonText className="text-white text-lg">CREAR CUENTA</ButtonText>}
-        </Button>
-      </Card>
+
+  return (
+
+    <ImageBackground 
+    source={require('@/assets/imagenDoc.png')}
+    style={styles.imageBackground}>
+
+     <View style={{backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        width: '100%',
+        paddingTop: 35,
+        paddingLeft:19
+        }} >
+        <Ionicons name="chevron-back-outline" size={25} color="#fff" />
     </View>
+
+    <View style={styles.phaterContainer} dataSet={{media: ids.phaterContainer}}>
+      {userId ? 
+      <MedicRegistrer
+        userId={userId}/> : 
+        renderSignUp()
+      }
+    </View>
+    </ImageBackground>  
   );
 }
+
+
+
+const {styles, ids} = StyleSheet.create({
+
+    phaterContainer: {
+        flexDirection: 'row',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        height: '100%',
+        width: '100%',
+        '@media(max-width:400px   )':{
+          width: '100%',
+        },
+
+        '@media (max-width: 2000px)':{
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%'
+        }
+    },
+
+    container:{
+        flexDirection: 'row',
+        borderTopLeftRadius: 40,
+        borderTopRightRadius: 40,
+        '@media (max-width: 2000px)':{
+          flexDirection: 'column',
+          backgroundColor: 'white',
+          gap: 20,
+          width: '50%',
+          position: 'absolute', 
+          bottom: 0,
+          height: '70%',
+           
+        },
+        '@media (max-width: 500px)': {
+          width: '100%', 
+          height: '65%',
+        },
+    },
+
+    imageBackground : {
+      width: '100%',
+      height: '100%',
+      '@media(max-width:400px )':{
+        width: '100%',
+      },
+    
+    },
+
+    input :{
+      padding: 15, 
+      borderRadius: 24,  
+      width:'80%', 
+      borderWidth: 2, 
+      borderColor: '#0A2240', 
+      alignSelf: 'center',
+      '@media (max-width: 2000px)':{
+        padding: 15, 
+        borderRadius: 20, 
+        width:'80%', 
+        borderWidth: 2, 
+        borderColor: '#0A2240', 
+        alignSelf: 'center'
+      }
+    },
+
+    password:{
+      display: 'flex',
+      flexDirection: 'row',
+      borderRadius: 24, 
+      width:'80%', 
+      borderWidth: 2, 
+      borderColor: '#0A2240', 
+      alignSelf: 'center',
+      '@media (max-width: 2000px)':{
+        
+        borderRadius: 24, 
+        width:'80%', 
+        borderWidth: 2, 
+        borderColor: '#0A2240', 
+        alignSelf: 'center',
+        flexDirection: 'row',
+        display: 'flex'
+    }
+  },
+
+  button:{
+    padding: 15, 
+    borderRadius: 20, 
+    width:'80%', 
+    borderWidth: 2, 
+    borderColor: '#0A2240', 
+    alignSelf: 'center',
+    marginBottom: 13,
+    backgroundColor: '#0A2240',
+    color:"#fff"
+  }
+
+});

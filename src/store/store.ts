@@ -3,7 +3,7 @@ import { patientApi } from "../services/patient.service";
 import { authApi } from "../services/auth.service";
 import authslice from "@/view/Login/AuthSlice"
 import { medicApi } from "../services/medic.service";
-import modalSlice from "@/view/PatientView/PatientSlice"
+import modalSlice from "@/view/Patient/PatientSlice"
 import { meditionApi } from "../services/medition.service";
 
 export const store = configureStore({

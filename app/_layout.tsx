@@ -2,6 +2,8 @@ import { Stack } from "expo-router";
 import { Provider } from "react-redux";
 import { store } from "../src/store/store";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import Toast from "react-native-toast-message";
+ 
 
 import "@/global.css";
 
@@ -9,11 +11,12 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <GluestackUIProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" options={{ title: 'Login' }} />
-          <Stack.Screen name="home" options={{ title: 'Home', headerShown: false }} />
-          <Stack.Screen name="Auth" options={{title: 'Auth'}}/>
-        </Stack>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" options={{ title: 'Login' }} />
+            <Stack.Screen name="home" options={{ title: 'Home', headerShown: false }} />
+            <Stack.Screen name="auth" options={{title: 'auth'}}/>
+          </Stack>
+        <Toast/>
       </GluestackUIProvider>
     </Provider>
   );

@@ -43,6 +43,7 @@ export const styles = StyleSheet.create({
       shadowOpacity: 0.2,
       shadowOffset: { width: 0, height: 2 },
       elevation: 5,
+      marginBottom:90
     },
     patientItem: {
         flexDirection: "row",
@@ -73,6 +74,13 @@ export const styles = StyleSheet.create({
       patientDetails: {
         fontSize: 14,
         color: "#666",
+      },
+
+      modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        
       },
 
   });

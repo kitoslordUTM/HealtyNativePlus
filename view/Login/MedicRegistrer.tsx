@@ -1,58 +1,21 @@
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useRegisterDoctorMutation } from "@/src/services/auth.service";
-import { useSelector } from "react-redux";
-import { RootState } from "@/src/store/store";
 import { View, TextInput, ActivityIndicator, KeyboardTypeOptions } from "react-native";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Text, TouchableOpacity } from "react-native";
 import { VStack } from "@/components/ui/vstack";
 import { Heading } from "@/components/ui/heading";
-import { Text } from "@/components/ui/text";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
+import { DoctorRegistrer } from "@/src/models/medic.model";
+import { registrerFields as fields}  from "./utils";
+import { MedicRegistrerProps } from "./utils";
+import Toast from "react-native-toast-message";
+import StyleSheet from 'react-native-media-query';
+import { ScrollView } from "react-native";
 
-interface Doctor {
-  name: string;
-  lastname: string;
-  age: number;
-  speciality: string;
-  telephone: string;
-  direction: string;
-  consultory: string;
-  user: string;
-  pacientes: any[];
-}
+export default function MedicRegistrer({userId}: MedicRegistrerProps) {
 
-export default function MedicRegistrer() {
-  const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    const fetchUserId = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem("userId");
-        console.log("User ID recuperado de AsyncStorage:", storedUserId); // Verifica que se recupera
-        if (storedUserId) {
-          setUserId(storedUserId);
-          setDoctor((prevDoctor) => ({
-            ...prevDoctor,
-            user: storedUserId, // Asegurar que se actualiza en doctor
-          }));
-        }
-      } catch (err) {
-        console.error("Error al recuperar userId", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserId();
-  }, []);
-  
-
-  const router = useRouter();
-  const [registerDoctor, { isLoading, error }] = useRegisterDoctorMutation();
-  const [doctor, setDoctor] = useState<Doctor>({
+  const [doctor, setDoctor] = useState<DoctorRegistrer>( 
+    {
     name: "",
     lastname: "",
     age: 0,
@@ -61,45 +24,58 @@ export default function MedicRegistrer() {
     direction: "",
     consultory: "",
     user: userId,
-    pacientes: [],
-  });
-
+    pacientes: []}
+  );
+  const [registerDoctor, { isLoading }] = useRegisterDoctorMutation();
+  const router = useRouter();
+  
  const handleRegisterDoctor = async () => {
+
+  console.log(userId)
+
   if (!doctor.user) {
     console.error("Error: El userId no está definido en doctor");
+    Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'id doc 👋'
+          });
     return;
   }
 
+
+
   try {
-    const response = await registerDoctor(doctor).unwrap();
+    const response = await registerDoctor( doctor).unwrap();
     console.log("Doctor registrado:", response);
+    Toast.show({
+              type: 'success',
+              text1: 'Exito',
+              text2: 'Exito al registrar tus datos 👋'
+            });
     router.push("/home");
   } catch (err) {
+    Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Error al registrar tus datos 👋'
+          });
     console.error("Error al registrar el doctor:", err);
   }
 };
 
-  const fields: { placeholder: string; key: keyof Doctor; keyboardType?: KeyboardTypeOptions }[] = [
-    { placeholder: "Nombre", key: "name" },
-    { placeholder: "Apellido", key: "lastname" },
-    { placeholder: "Edad", key: "age", keyboardType: "numeric" },
-    { placeholder: "Especialidad", key: "speciality" },
-    { placeholder: "Teléfono", key: "telephone" },
-    { placeholder: "Dirección", key: "direction" },
-    { placeholder: "Consultorio", key: "consultory" },
-  ];
 
   return (
-    <View className="flex items-center justify-center min-h-screen bg-[#0A1F44]">
-      <Card className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-        <Heading size="2xl" className="text-center mb-4 text-[#0A1F44]">
-          Vamos a registrarnos
+      <ScrollView style={styles.container} dataSet={{media: ids.container}}>
+        <Heading style={{alignSelf: 'center', paddingTop: 10}}>
+          Ingresa tus datos
         </Heading>
-        <VStack className="space-y-3">
+        <VStack style={{gap:'0.5rem'}}>
           {fields.map(({ placeholder, key, keyboardType }) => (
             <TextInput
+              style={styles.input}
+              dataSet={{media: ids.input}}
               key={key}
-              className="w-full p-3 border  border-gray-300 rounded-lg text-[#0A1F44] focus:border-blue-600"
               placeholder={placeholder}
               keyboardType={keyboardType}
               value={typeof doctor[key] === "string" ? (doctor[key] as string) : doctor[key]?.toString() || ""}
@@ -112,11 +88,68 @@ export default function MedicRegistrer() {
             />
           ))}
         </VStack>
-        {error && <Text className="text-red-500 text-center mt-2">Error al registrar el doctor</Text>}
-        <Button onPress={handleRegisterDoctor} className="w-full py-2 mt-4 bg-blue-500 rounded-lg" disabled={isLoading}>
-          {isLoading ? <ActivityIndicator color="#fff" /> : <ButtonText className="text-white text-lg">Registrar</ButtonText>}
-        </Button>
-      </Card>
-    </View>
+        <TouchableOpacity onPress={handleRegisterDoctor}  disabled={isLoading}
+          style={styles.button}  
+        >
+          {isLoading ? 
+            <ActivityIndicator color="#fff" /> 
+          : <Text style={{ color:'#fff', alignSelf:'center'}}>Registrar</Text>}
+        </TouchableOpacity>
+      </ScrollView>
   );
 }
+
+
+const {styles, ids} = StyleSheet.create({
+
+  container:{
+    flexDirection: 'row',
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+     
+    '@media (max-width: 2000px)':{
+      flexDirection: 'column',
+      backgroundColor: 'white',
+      width: '50%',
+      position: 'absolute', // 📌 Lo posiciona de forma absoluta en la pantalla
+      bottom: 0,
+      height: '100%',
+      gap:'0.5rem'
+       
+    },
+    '@media (max-width: 480px)': {
+      width: '100%', // 📌 Se adapta mejor a celulares pequeños
+      height: '65%',
+    },
+  },
+
+  input :{
+    padding: 15, 
+    borderRadius: 24, 
+    width:'80%', 
+    borderWidth: 2, 
+    borderColor: '#0A2240', 
+    alignSelf: 'center',
+    marginBottom: 5,
+    '@media (max-width: 2000px)':{
+      padding: 15, 
+      borderRadius: 24, 
+      width:'80%', 
+      borderWidth: 2, 
+      borderColor: '#0A2240', 
+      alignSelf: 'center'
+    }
+  },
+
+  button:{
+    padding: 15, 
+    borderRadius: 24, 
+    width:'80%', 
+    borderWidth: 2, 
+    borderColor: '#0A2240', 
+    alignSelf: 'center',
+    marginBottom: 13,
+    backgroundColor: '#0A2240'
+  }
+ 
+});

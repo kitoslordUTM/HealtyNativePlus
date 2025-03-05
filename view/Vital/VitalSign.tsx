@@ -1,41 +1,58 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from "expo-router";
 import { useGetMeditionsQuery } from '@/src/services/medition.service';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/src/store/store';
+import Activity from '@/src/molecules/Activity';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from "@react-navigation/native";
 
 const VitalSignsScreen = () => {
   
-    const [userId, setUserId] = useState("");
-    const [loading, setLoading] = useState(true);
-    const SelectedId = useSelector((state: RootState) => state.modalSlice.patientId);
-
-    useEffect(() => {
-        const fetchStoredData = async () => {
-            try {
-                const storedPatientId = await AsyncStorage.getItem("selectedPatientId");
-                setUserId(storedPatientId || "");
-                console.log("Patient ID:", storedPatientId);
-            } catch (error) {
-                console.error("Error al recuperar datos del AsyncStorage:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchStoredData();
-      }, [SelectedId]);
-      
-    const { data: vitalSignsData, isFetching, refetch } = useGetMeditionsQuery( SelectedId || userId);
-
-    useEffect(() => {
-            refetch();
-            console.log("Refetching data...");
-    }
-    , [SelectedId]);
-
+    const [patientId, setPatientId] = useState("");
+   
     const router = useRouter();
+
+    const { data: vitalSignsData, isLoading, refetch } = useGetMeditionsQuery( patientId, {
+        skip: !patientId,
+      });
+
+
+
+    useFocusEffect(
+        useCallback(() => {
+          let isActive = true; // Usualmente se usa para prevenir fugas de memoria si lo deseas
+    
+          (async () => {
+            try {
+              const storedPatientId = await AsyncStorage.getItem("selectedPatientId");
+              if (isActive) {
+                setPatientId(storedPatientId || "");
+                console.log("Patient ID:", storedPatientId);
+                
+              }
+            } catch (error) {
+              console.error("Error reading AsyncStorage:", error);
+            }
+          })();
+    
+          // Opcional: si deseas limpiar algo cuando la pantalla pierda el foco
+          return () => {
+            isActive = false;
+          };
+        }, []) // Ajusta las dependencias según necesites
+      );
+
+      useFocusEffect(
+        useCallback(() => {
+          if (patientId ) {
+            refetch();
+            console.log(patientId);
+          }
+        }, [patientId, refetch])
+      );
+    
+
+    
 
     return (
         <SafeAreaView style={styles.container}>
@@ -45,8 +62,8 @@ const VitalSignsScreen = () => {
             </TouchableOpacity>
 
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                {isFetching || loading ? (
-                    <ActivityIndicator size="large" color="#0061fe" style={styles.loader} />
+                {  isLoading ? (
+                    <Activity/>
                 ) : vitalSignsData && vitalSignsData.length > 0 ? (
                     vitalSignsData.map((item, index) => (
                         <View key={index} style={styles.card}>

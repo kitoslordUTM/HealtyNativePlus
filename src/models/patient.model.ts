@@ -1,3 +1,4 @@
+import { User } from "./auth.model";
 
 
 export type Patient = {
@@ -9,7 +10,7 @@ export type Patient = {
   telephone: number;
   direction: string;
   condition: string;
-  user: string
+  user: User 
   doctor?: string
   // createdAt?: Date; // Generado automáticamente por `timestamps: true`
   // updatedAt?: Date; // Generado automáticamente por `timestamps: true`

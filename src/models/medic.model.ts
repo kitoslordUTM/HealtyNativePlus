@@ -13,3 +13,16 @@ export type Doctor = {
     user: string; // El ID del usuario
     pacientes?: Patient[]; // El array de pacientes es opcional
   };
+
+  export type DoctorRegistrer = {
+    name: string;
+    lastname: string;
+    age: number;
+    speciality: string;
+    telephone: string;
+    direction: string;
+    consultory: string;
+    user: string;
+    pacientes: any[];
+  }
+  
