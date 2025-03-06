@@ -52,6 +52,16 @@ export default function MedicScreen() {
     }, [refetch])
   );
 
+  // Ordenar pacientes de forma descendente
+  const sortedPatients = (fetchedData || [])
+    .filter((patient) => !patient.doctor) // Filtrar pacientes sin doctor
+    .sort((a, b) => {
+      if (a._id && b._id) {
+        return b._id.localeCompare(a._id); // Orden descendente por _id
+      }
+      return 0;
+    });
+
   // Al tocar un paciente
   const handlePressPatient = async (patient: Patient) => {
     setSelectedPatient(patient);
@@ -173,7 +183,7 @@ export default function MedicScreen() {
           {/* Lista de pacientes */}
           <ScrollView>
             <PatientList
-              data={(fetchedData || []).filter((patient) => !patient.doctor)}
+              data={sortedPatients} // Usamos la lista ordenada
               onPressPatient={handlePressPatient}
             />
           </ScrollView>

@@ -4,6 +4,7 @@ import { Doctor } from "../models/medic.model";
 import { Patient } from "../models/patient.model"; // Importamos el modelo de Paciente
 
 export type SignUpResponse = {
+  token: any;
   message: string;
   user: User;
 };
