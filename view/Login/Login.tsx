@@ -5,8 +5,8 @@ import StyleSheet from "react-native-media-query";
 import Toast from "react-native-toast-message";
 import { TextInput } from "react-native";
 import { registerForPushNotificationsAsync } from "@/src/services/notifications.service";
-import { useEffect, useState } from "react";
-import * as Notifications from "expo-notifications";
+import { useState } from "react";
+import useScheduledNotifications from "@/src/hooks/useScheduledNotifications";
 
 const { ActivityIndicator, View, useSignInMutation, useRouter, Text } = Index;
 
@@ -14,62 +14,19 @@ export default function Login() {
   const router = useRouter();
   const [signIn, { isLoading }] = useSignInMutation();
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-
-  useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem("authToken");
-        console.log("Token recuperado de AsyncStorage:", storedToken);
-      } catch (error) {
-        console.error("Error al recuperar el token:", error);
-      }
-    };
-
-    checkToken();
-
-    // 🔹 Configurar las notificaciones automáticas cada 20 segundos
-    const interval = setInterval(async () => {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "🔔 Recordatorio ejemplo",
-          body: "Notificación para el paciente con hipertensión, tomar su pastilla SIDELNAFIL.",
-          sound: true,
-        },
-        trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, // Usa el enum correcto
-          seconds: 45,
-          repeats: false,
-        },
-      });
-    }, 45000);
-
-    return () => clearInterval(interval); // Limpia el intervalo al desmontar
-  }, []);
-
+  
+  useScheduledNotifications(); 
+  
   const handleLogin = async () => {
     try {
       const response = await signIn(credentials).unwrap();
       console.log("Respuesta del login:", response);
 
-      const token = response.token;
-      if (token) {
-        await AsyncStorage.setItem("authToken", token);
-        console.log("Token guardado en AsyncStorage:", token);
-      } else {
-        console.error("No se recibió un token en la respuesta");
-      }
-
       const userId = response.user.id;
       await AsyncStorage.setItem("userId", userId || "");
 
-      const pushToken = await registerForPushNotificationsAsync();
-      if (pushToken) {
-        await AsyncStorage.setItem("pushToken", pushToken);
-        console.log("Push Token guardado:", pushToken);
-      } else {
-        console.warn("No se pudo obtener el Push Token.");
-      }
-
+     registerForPushNotificationsAsync();
+    
       Toast.show({
         type: "success",
         text1: "Éxito",
