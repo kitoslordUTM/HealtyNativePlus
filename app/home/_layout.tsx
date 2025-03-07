@@ -1,9 +1,19 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useWindowDimensions } from 'react-native';
+import MyTabBar from '@/components/MyTabBar';
 
 export default function TabLayout() {
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width > 1024; // Definir umbral de pantalla grande
+
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs
+      tabBar={props => <MyTabBar {...props} />}
+      screenOptions={{
+        headerShown: false,
+      }}>
+      
       <Tabs.Screen
         name="index"
         options={{
@@ -11,7 +21,8 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Ionicons name="home" size={28} color={color} />,
         }}
       />
-       <Tabs.Screen
+      
+      <Tabs.Screen
         name="patients"
         options={{
           title: 'Patients',
@@ -26,6 +37,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Ionicons name="settings" size={28} color={color} />,
         }}
       />
+      
     </Tabs>
   );
 }
