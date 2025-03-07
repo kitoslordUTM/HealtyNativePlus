@@ -13,8 +13,8 @@ import MedicRegistrer from "./MedicRegistrer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function Auth() {
-  const router = useRouter();
-  const [signUp, { isLoading, error }] = useSignUpMutation();
+  
+  const [signUp, { isLoading}] = useSignUpMutation();
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [ userId, setUserId] = useState<string>('') 

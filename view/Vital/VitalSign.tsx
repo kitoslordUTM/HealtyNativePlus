@@ -5,6 +5,7 @@ import { useGetMeditionsQuery } from '@/src/services/medition.service';
 import Activity from '@/src/molecules/Activity';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
+ 
 
 const VitalSignsScreen = () => {
   
