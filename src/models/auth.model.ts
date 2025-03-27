@@ -1,4 +1,5 @@
 export type User = {
+    id?: string;
     email: string;
     password: string;
     verified?: boolean;
@@ -7,4 +8,5 @@ export type User = {
     forgotPasswordCodeValidation?: number;
     createdAt?: string;
     updatedAt?: string;
+    notificationToken?: string;
   };
