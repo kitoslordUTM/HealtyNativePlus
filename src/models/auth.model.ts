@@ -8,4 +8,5 @@ export type User = {
     forgotPasswordCodeValidation?: number;
     createdAt?: string;
     updatedAt?: string;
+    notificationToken?: string;
   };

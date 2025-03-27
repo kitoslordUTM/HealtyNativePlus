@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useRegisterDoctorMutation } from "@/src/services/auth.service";
-import { View, TextInput, ActivityIndicator, KeyboardTypeOptions } from "react-native";
+import { View, TextInput, ActivityIndicator  } from "react-native";
 import { Text, TouchableOpacity } from "react-native";
 import { VStack } from "@/components/ui/vstack";
 import { Heading } from "@/components/ui/heading";
@@ -11,6 +11,10 @@ import { MedicRegistrerProps } from "./utils";
 import Toast from "react-native-toast-message";
 import StyleSheet from 'react-native-media-query';
 import { ScrollView } from "react-native";
+import { useUpdateUserMutation } from "@/src/services/auth.service";
+import { registerForPushNotificationsAsync } from "@/src/services/notifications.service";
+
+
 
 export default function MedicRegistrer({userId}: MedicRegistrerProps) {
 
@@ -53,6 +57,10 @@ export default function MedicRegistrer({userId}: MedicRegistrerProps) {
               text1: 'Exito',
               text2: 'Exito al registrar tus datos 👋'
             });
+
+    registerForPushNotificationsAsync();
+    
+
     router.push("/home");
   } catch (err) {
     Toast.show({

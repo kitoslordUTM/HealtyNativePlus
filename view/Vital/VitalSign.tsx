@@ -5,6 +5,8 @@ import { useGetMeditionsQuery } from '@/src/services/medition.service';
 import Activity from '@/src/molecules/Activity';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
+import { AdvancedFilterBar } from '@/components/AdvanceFilterBar';
+import DateFilter from '@/components/filters/DateFilter';
 
 const VitalSignsScreen = () => {
   
@@ -12,11 +14,21 @@ const VitalSignsScreen = () => {
    
     const router = useRouter();
 
-    const { data: vitalSignsData, isLoading, refetch } = useGetMeditionsQuery( patientId, {
-        skip: !patientId,
-      });
+    const [startDate, setStartDate]= useState('')
 
-
+    const {
+      data: vitalSignsData,
+      isLoading,
+      refetch,
+    } = useGetMeditionsQuery({userId: patientId, startDate:startDate }, {
+      skip: !patientId,
+    });
+  
+    const handleSubmit = (formattedDate: string) => {
+      setStartDate(formattedDate);
+      refetch();
+      console.log(formattedDate, 'formattedDate');
+    }
 
     useFocusEffect(
         useCallback(() => {
@@ -51,15 +63,23 @@ const VitalSignsScreen = () => {
         }, [patientId, refetch])
       );
     
-
-    
-
     return (
-        <SafeAreaView style={styles.container}>
-            {/* Botón de regreso */}
-            <TouchableOpacity onPress={() => router.push("/home/patients")} style={styles.backButton}>
-                <Text style={styles.backButtonText}>←</Text>
-            </TouchableOpacity>
+     <SafeAreaView style={styles.container}>
+             {/* aqui ira el filtro fecha */}
+            
+      <AdvancedFilterBar 
+              Filter={
+                <>
+                  <DateFilter
+                    handleSubmit={handleSubmit}
+                    status={setStartDate} // Ahora pasamos setStartDate
+                    startDate={startDate} // Pasamos startDate como prop
+                    refetch={refetch}
+                  />
+                   
+                </>
+              }
+            />
 
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 {  isLoading ? (
@@ -69,6 +89,7 @@ const VitalSignsScreen = () => {
                         <View key={index} style={styles.card}>
                             <Text style={styles.title}>{item.meditionName}</Text>
                             <Text style={styles.value}>{item.value}</Text>
+                            <Text style={styles.value}>{item.createdAt}</Text>
                         </View>
                     ))
                 ) : (
@@ -89,29 +110,15 @@ const styles = StyleSheet.create({
     scrollContainer: {
         paddingTop: 73,
         paddingHorizontal: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
         flexGrow: 1,
     },
-    backButton: {
-        position: 'absolute',
-        top: 20,
-        left: 16,
-        zIndex: 10,
-        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-        padding: 10,
-        borderRadius: 20,
-    },
-    backButtonText: {
-        fontSize: 24,
-        color: '#000',
-    },
+
     card: {
         marginBottom: 16,
         padding: 16,
         borderRadius: 12,
         elevation: 2,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#11275d',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -121,12 +128,12 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#000000',
+        color: 'white',
         marginBottom: 8,
     },
     value: {
         fontSize: 24,
-        color: '#0061fe',
+        color: 'white',
     },
     noDataText: {
         fontSize: 18,

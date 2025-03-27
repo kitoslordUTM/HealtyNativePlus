@@ -23,9 +23,15 @@ export const medicApi = createApi({
     }),
 
     // Nueva ruta agregada
-    getPatientsByDoctorId: builder.query<Patient[], string>({
-      query: (doctorId) => `/Medic/Get/${doctorId}/Patients`, // Ruta nueva
-    }),
+    getPatientsByDoctorId: builder.query<Patient[], { doctorId: string; searchTerm?: string }>(
+      {
+        query: ({ doctorId, searchTerm }) => ({
+          url: `/Medic/Get/${doctorId}/Patients`,
+          params: searchTerm ? { searchTerm } : undefined,
+        }),
+      }
+    ),
+    
   }),
 });
 

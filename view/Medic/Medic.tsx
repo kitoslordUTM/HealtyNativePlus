@@ -5,28 +5,36 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import SearchBar from "@/components/SearchBar/SearchBar";
 import Activity from "@/src/molecules/Activity";
-import ModalCustom from "@/components/ModalCustom";
+import ModalCustom from "@/components/ModalCustom/ModalCustom";
 import { PatientList } from "../Patient";
 import { useGetPatientsQuery } from "@/src/services/patient.service";
 import { useAddPatientsToDoctorMutation } from "@/src/services/medic.service";
 import { useUpdatePatientDoctorMutation } from "@/src/services/patient.service";
 import { Patient } from "@/src/models/patient.model";
 import Toast from "react-native-toast-message";
+import _ from "lodash"; 
+import { usePatients } from "@/src/hooks/usePatients";
+ 
 
 export default function MedicScreen() {
   // Estado de la query
-  const { data: fetchedData, refetch, isLoading } = useGetPatientsQuery();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const { data: fetchedData, refetch, isLoading } = useGetPatientsQuery({
+    searchTerm
+  });
   // Mutations
   const [addPatientsToDoctor] = useAddPatientsToDoctorMutation();
   const [addDoctorToPatient] = useUpdatePatientDoctorMutation();
-
+  const [searchInput, setSearchInput] = useState('');
   // Estados locales
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [doctorId, setDoctorId] = useState<string>("");
   // Control local del modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {uniquePatients}= usePatients()
 
   const router = useRouter();
 
@@ -112,6 +120,29 @@ export default function MedicScreen() {
     }
   };
 
+  
+
+  const suggestedList = uniquePatients.map((item) => {
+    return {
+      label: `${item.name} ${item.lastname}`, // Usamos lastName (asegúrate de que el nombre de la propiedad sea correcto)
+      value: `${item.name}`,
+    };
+  });
+
+  // --- Manejo de la búsqueda en el SearchBar ---
+  const debouncedSearch = useCallback(
+    _.debounce(async (query: string) => {
+      await refetch() ;
+    }, 500),
+    []
+  );
+
+  const handleSearch = (query: string) => {
+    setSearchInput(query);
+    setSearchTerm(query)
+    debouncedSearch(query);
+  };
+
   // Cerrar modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -127,13 +158,13 @@ export default function MedicScreen() {
       <View style={styles.modalOverlay}>
         <Image
           source={{ uri: "https://gluestack.github.io/public-blog-video-assets/saree.png" }}
-          className="mb-6 h-[240px] w-full rounded-md aspect-[4/3]"
+          style={styles.patientImage}
           alt="image"
         />
         <Text>Información del Paciente</Text>
-        <View>
-          <Text>{selectedPatient.name} {selectedPatient.lastname}</Text>
-          <Text>Edad: {selectedPatient.age}</Text>
+        <View >
+          <Text style={styles.patientName}>{selectedPatient.name} {selectedPatient.lastname}</Text>
+          <Text >Edad: {selectedPatient.age}</Text>
           <Text>Género: {selectedPatient.gender}</Text>
           <Text>Condición: {selectedPatient.condition}</Text>
           <Text>Teléfono: {selectedPatient.telephone}</Text>
@@ -146,11 +177,11 @@ export default function MedicScreen() {
   // Footer del modal
   const ModalFooter = () => (
     <View style={{ flexDirection: "column", justifyContent: "space-evenly" }}>
-      <TouchableOpacity onPress={handleAddPatient}>
-        <Text>Añadir Paciente</Text>
+      <TouchableOpacity onPress={handleAddPatient} style={styles.footerButton}>
+        <Text style={styles.closeButtonText}>Añadir Paciente</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleCloseModal}>
-        <Text>Cerrar</Text>
+      <TouchableOpacity  style={styles.closeButton} onPress={handleCloseModal}>
+        <Text style={styles.closeButtonText}>Cerrar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -161,25 +192,16 @@ export default function MedicScreen() {
         <Activity />
       ) : (
         <>
-          <TouchableOpacity
-            onPress={() => router.push("/home/patients")}
-            style={{ position: "absolute", top: 24, left: 16 }}
-          >
-            <Text style={{ fontSize: 24 }}>←</Text>
-          </TouchableOpacity>
-
           <Text style={styles.title}>Buscar pacientes</Text>
-
           {/* Barra de búsqueda */}
-          <View style={styles.searchContainer}>
-            <Ionicons name="search-outline" size={20} color="#888" />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search patient"
-              placeholderTextColor="#888"
-            />
-          </View>
-
+             <SearchBar
+                placeholder='Filtrar por nombre o apellido'
+                handleSecondEvent={handleSearch}
+                suggestionsList={suggestedList}
+                onSearch={handleSearch}
+                value={searchInput}
+             />
+        
           {/* Lista de pacientes */}
           <ScrollView>
             <PatientList

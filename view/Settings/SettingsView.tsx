@@ -45,11 +45,6 @@ const {
      <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.iconContainer}>
-          <View  >
-          <Ionicons name="chevron-back-outline" size={20} color="#000" />
-          </View>
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>Configuración</Text>
          </View>
         <View style={styles.profile}>

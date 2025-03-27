@@ -5,9 +5,13 @@ export const patientApi = createApi({
     reducerPath: 'patientApi',
     baseQuery: fetchBaseQuery({ baseUrl: 'https://backhplus.onrender.com' }),
     endpoints: (builder) => ({
-        getPatients: builder.query<Patient[], void>({ 
-            query: () => '/Patient/Get',
-        }),
+        
+        getPatients: builder.query<Patient[], { searchTerm?: string }>({
+            query: ({ searchTerm }) => ({
+              url: '/Patient/Get',
+              params: searchTerm ? { searchTerm } : undefined, // Agrega el searchTerm solo si existe
+            }),
+          }),
         
         postPatient: builder.mutation<void, Partial<Patient>>({ 
             query: (newPatient) => ({

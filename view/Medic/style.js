@@ -7,12 +7,15 @@ export const styles = StyleSheet.create({
       backgroundColor: "#F8FAFC",
       padding: 16,
     },
+    
     title: {
-      fontSize: 30,
-      fontWeight: 'bold',
+      fontSize: 20,
+      fontWeight: '800',
       color: '#000',
-      marginTop: 27,
-      marginBottom:10
+      marginTop: 20,
+      marginBottom: 10,
+      alignItems: 'center', // Centra los hijos horizontalmente
+      justifyContent: 'center',
     },
     searchContainer: {
       flexDirection: "row",
@@ -75,11 +78,84 @@ export const styles = StyleSheet.create({
         color: "#666",
       },
 
+      
       modalOverlay: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         
+      },
+      modalContent: {
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        height: 500,
+  
+      },
+      patientImage: {
+        width: 200,
+        height: 200,
+        borderRadius: 100,
+        marginBottom: 15,
+        resizeMode: 'cover',
+        alignSelf: 'center',
+      },
+      patientName: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 10,
+      },
+      patientDetails: {
+        marginBottom: 15,
+      },
+      subHeading: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginTop: 20,
+      },
+      contactButtons: {
+        marginTop: 20,
+        justifyContent: 'center',
+      },
+      smsButton: {
+        backgroundColor: '#007bff',
+        marginBottom: 10,
+        borderRadius: 5,
+        padding: 10,
+      
+      },
+      smsButtonText: {
+        color: 'white',
+        textAlign: 'center',
+        width:'90%'
+      },
+      smsUnavailableText: {
+        color: 'red',
+        textAlign: 'center',
+        marginTop: 10,
+      },
+      modalFooter: {
+        padding: 20,
+      },
+      footerButton: {
+        backgroundColor: '#11275d',
+        padding: 10,
+        borderRadius: 5,
+      },
+      footerButtonText: {
+        color: 'white',
+        textAlign: 'center',
+      },
+      closeButton: {
+        backgroundColor: '#f44336',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 10,
+      },
+      closeButtonText: {
+        color: 'white',
+        textAlign: 'center',
       },
 
   });

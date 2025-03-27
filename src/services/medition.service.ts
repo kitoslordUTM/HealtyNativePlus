@@ -5,8 +5,12 @@ export const meditionApi = createApi({
   reducerPath: 'meditionApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://backhplus.onrender.com' }),
   endpoints: (builder) => ({
-    getMeditions: builder.query<Medition[], string>({
-      query: (userId) => `/Medition/user-meditions/${userId}`,
+
+    getMeditions: builder.query<Medition[], { userId: string, startDate?: string }>({
+      query: ({ userId, startDate }) => ({
+      url: `/Medition/user-meditions/${userId}`,
+      params: startDate ? { startDate } : undefined
+      })
     }),
     
     addMedition: builder.mutation<Medition, { medition: Medition }>({

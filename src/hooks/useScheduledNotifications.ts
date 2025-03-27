@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 
@@ -15,24 +16,25 @@ const useScheduledNotifications = (): void => {
 
     checkToken();
 
-    // 🔹 Configurar notificaciones cada 45 segundos
-    const interval = setInterval(async () => {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "🔔 Recordatorio ejemplo",
-          body: "Notificación para el paciente con hipertensión, tomar su pastilla SIDELNAFIL.",
-          sound: true,
-        },
-        trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, // Usa el enum correcto
+    // 🔹 Solo ejecutar en dispositivos móviles
+    if (Platform.OS !== "web") {
+      const interval = setInterval(async () => {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "🔔 Recordatorio ejemplo",
+            body: "Notificación para el paciente con hipertensión, tomar su pastilla SIDELNAFIL.",
+            sound: true,
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
             seconds: 60,
             repeats: false,
           },
-  
-      });
-    }, 60000);
+        });
+      }, 60000);
 
-    return () => clearInterval(interval); // Limpia el intervalo al desmontar
+      return () => clearInterval(interval); // Limpia el intervalo al desmontar
+    }
   }, []);
 };
 

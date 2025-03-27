@@ -63,19 +63,32 @@ export default function Auth() {
           value={credentials.email}
           onChangeText={(text) => setCredentials({ ...credentials, email: text })}
         />
-        <View  style={styles.password} dataSet={{media: ids.password}}>
+        <View style={styles.password} dataSet={{ media: ids.password }}>
           <TextInput
             placeholder="Contraseña"
-            style={{padding: 15, width:'85%', borderTopStartRadius: 20, borderBottomStartRadius: 20,  }}
+            style={{
+              padding: 15,
+              width: "80%",
+              borderTopStartRadius: 20,
+              borderBottomStartRadius: 20,
+            }}
             secureTextEntry={!showPassword}
             value={credentials.password}
-            onChangeText={(text) => setCredentials({ ...credentials, password: text })}
+            onChangeText={(text) =>
+              setCredentials({ ...credentials, password: text })
+            }
           />
           <TouchableOpacity
             onPress={() => setShowPassword(!showPassword)}
-      
+            style={{ paddingHorizontal: 23, alignSelf: "center" }}
           >
-            <Text style={{ marginTop:12   }} >{showPassword ? "Ocultar" : "Ver"}</Text>
+            <Text style={{ marginTop: 9, alignSelf: "center" }}>
+              {showPassword ? (
+                <Ionicons size={25} name="eye-off" />
+              ) : (
+                <Ionicons size={25} name="eye" />
+              )}
+            </Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={handleRegister}   disabled={isLoading} style={styles.button}  >
@@ -90,16 +103,19 @@ export default function Auth() {
   return (
 
     <ImageBackground 
-    source={require('@/assets/imagenDoc.png')}
+    source={require('@/assets/imagendoc.jpg')}
     style={styles.imageBackground}>
 
-     <View style={{backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        width: '100%',
-        paddingTop: 35,
-        paddingLeft:19
-        }} >
+      <TouchableOpacity
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          paddingTop: 35,
+          paddingLeft: 19,
+        }}
+        onPress={() => router.push("/")}
+      >
         <Ionicons name="chevron-back-outline" size={25} color="#fff" />
-    </View>
+      </TouchableOpacity>
 
     <View style={styles.phaterContainer} dataSet={{media: ids.phaterContainer}}>
       {userId ? 

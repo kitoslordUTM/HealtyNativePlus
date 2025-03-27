@@ -6,16 +6,16 @@ import Toast from "react-native-toast-message";
 import { TextInput } from "react-native";
 import { registerForPushNotificationsAsync } from "@/src/services/notifications.service";
 import { useState } from "react";
-import useScheduledNotifications from "@/src/hooks/useScheduledNotifications";
-
+import { Ionicons } from "@expo/vector-icons";
+import { Platform } from "react-native";
 const { ActivityIndicator, View, useSignInMutation, useRouter, Text } = Index;
 
 export default function Login() {
   const router = useRouter();
   const [signIn, { isLoading }] = useSignInMutation();
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  
-  useScheduledNotifications(); 
+  const [showPassword, setShowPassword] = useState(false);
+ 
   
   const handleLogin = async () => {
     try {
@@ -25,7 +25,9 @@ export default function Login() {
       const userId = response.user.id;
       await AsyncStorage.setItem("userId", userId || "");
 
-     registerForPushNotificationsAsync();
+      if (Platform.OS === "android" || Platform.OS === "ios") {
+        await registerForPushNotificationsAsync();
+      }
     
       Toast.show({
         type: "success",
@@ -115,17 +117,21 @@ export default function Login() {
                 }
             />
 
-
-          <TextInput
-            style={{
+          <View style={{
               borderRadius: 40,
               marginBottom: 16, // assuming 1rem is approximately 16px
               alignSelf: "center",
               width: "80%",
               borderWidth: 2, 
               borderColor: '#0A2240',
-              padding: 15
-              
+              display: 'flex',
+              flexDirection: 'row',
+              padding: 10,
+            }} >      
+          <TextInput
+            secureTextEntry={!showPassword}
+            style={{
+              width: "85%",
             }}
             placeholder="Contraseña"
             value={credentials.password}
@@ -133,6 +139,16 @@ export default function Login() {
               setCredentials({ ...credentials, password: text })
             }
             />
+            <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            
+            >
+            <View style={{ display: "flex", alignItems: "center" , marginTop:5}} dataSet={{ media: ids.eye }}>
+              <Ionicons size={25} name={showPassword ? "eye-off" : "eye"} color="blue" />
+            </View>
+
+          </TouchableOpacity>
+          </View>
 
           <View  style={{
               borderRadius: 30,
@@ -371,4 +387,18 @@ const { ids, styles } = StyleSheet.create({
       marginBottom: 20,
     },
   },
+
+  eye:{
+    marginRight: 200,
+    marginTop: 10,
+    "@media (max-width: 2000px)": {
+      alignSelf: "center", 
+      width: "15%"                 
+    },
+    "@media (max-width: 480px)": {
+      alignSelf: "center", 
+      width: "15%"
+    },
+  }
+
 });

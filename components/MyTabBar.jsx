@@ -50,11 +50,11 @@ export default function MyTabBar({ state, descriptors, navigation }) {
               style={styles.tabbarItem}
             >
               {IconComponent ? (
-                <IconComponent color={isFocused ? '#673ab7' : 'black'} />
+                <IconComponent color={isFocused ? 'blue' : 'black'} />
               ) : (
                 <Text>❓</Text> // Fallback si no hay icono definido
               )}
-              <Text style={{ color: isFocused ? '#673ab7' : 'black' }}>
+              <Text style={{ color: isFocused ? 'blue' : 'black' }}>
                 {label}
               </Text>
             </TouchableOpacity>
@@ -67,27 +67,54 @@ export default function MyTabBar({ state, descriptors, navigation }) {
 const { styles, ids } = StyleSheet.create({
   tabbar: {
     position: 'absolute',
-    bottom: 25,
-    left: '50%',
+    height:'100%',
     transform: [{ translateX: -150 }],
-    width: 300,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: '20%',
+    left:'10%',
+    borderWidth: 1,
+    flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: 'white',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 25,
     borderCurve: 'continuous',
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     elevation: 5,
+    "@media (max-width: 760px)": {
+      position: 'absolute',
+      bottom: 25,
+      left: '50%',
+      height:'10%',
+      transform: [{ translateX: -150 }],
+      width: 300,
+      flexDirection: 'row',
+      borderColor:'white',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      backgroundColor: 'white',
+      paddingVertical: 15,
+      paddingHorizontal: 30,
+      borderRadius: 25,
+      borderCurve: 'continuous',
+      shadowColor: "#000",
+      shadowOpacity: 0.2,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 5,
+    },
   },
   tabbarItem: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 10,
+     width: '100%',
+     alignItems: 'center',
+     borderBottomWidth: 1,
+     padding: 10,
+
+    "@media (max-width: 760px)": {
+      flex: 1,
+      borderColor:'white',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 10,
+    }
+
   },
 });

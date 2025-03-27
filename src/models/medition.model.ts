@@ -5,7 +5,7 @@ export type Medition = {
     id?: string;
     meditionName: string;
     value: number;
-    date: Date;
+    createdAt?: string
     user: User;
 
 }

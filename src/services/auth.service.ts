@@ -4,9 +4,9 @@ import { Doctor } from "../models/medic.model";
 import { Patient } from "../models/patient.model"; // Importamos el modelo de Paciente
 
 export type SignUpResponse = {
-  token: any;
   message: string;
   user: User;
+ 
 };
 
 export type RegisterDoctorResponse = {
@@ -51,6 +51,19 @@ export const authApi = createApi({
         body: patient,
       }),
     }),
+
+    updateUser: builder.mutation<User, { userId: string; updates: any }>({
+      query: ({ userId, updates }) => ({
+        url: `/Auth/Update/${userId}`, // Ruta corregida
+        method: 'PATCH',
+        body: updates, // Enviar solo las actualizaciones
+      }),
+    }),
+    
+
+
+
+
   }),
 });
 
@@ -58,5 +71,6 @@ export const {
   useSignInMutation, 
   useSignUpMutation, 
   useRegisterDoctorMutation, 
-  useRegisterPatientMutation 
+  useRegisterPatientMutation,
+  useUpdateUserMutation 
 } = authApi;

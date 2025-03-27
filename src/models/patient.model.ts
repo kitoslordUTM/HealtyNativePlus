@@ -10,8 +10,11 @@ export type Patient = {
   telephone: number;
   direction: string;
   condition: string;
+  rescueNumberOne: number;
+  rescueNumberTwo: number;
   user: User 
   doctor?: string
+
   // createdAt?: Date; // Generado automáticamente por `timestamps: true`
   // updatedAt?: Date; // Generado automáticamente por `timestamps: true`
 };
