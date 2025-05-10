@@ -1,12 +1,12 @@
 import { View} from 'react-native';
-import HomeView from '@/view/HomeView/HomeView';
+import Home from '@/view/Home/Home';
 
 export default function HomeScreen() {
 
  
 
   return (
-      <HomeView/>
+      <Home/>
   );
 }
 

@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: 'white', padding: 20 },
+    container: { flex: 1, backgroundColor: 'white', padding: 20 , height: '100%'},
     imageContainer: {
       backgroundColor: '#005A9C',
       borderRadius: 12,
@@ -41,11 +41,14 @@ export const styles = StyleSheet.create({
     arrow: { fontSize: 16, color: '#000' },
 
     TittleCenter: {
+         // Centra los hijos verticalmente
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#000',
+        marginTop: 20,
+        marginBottom: 10,
         alignItems: 'center', // Centra los hijos horizontalmente
-        justifyContent: 'center', // Centra los hijos verticalmente
-        width: '100%', // Ocupa todo el ancho disponible
-        textAlign: 'center', // Asegura que el texto se alinee al centro
-        marginBottom: 30
+        justifyContent: 'center',
     }
 
   });

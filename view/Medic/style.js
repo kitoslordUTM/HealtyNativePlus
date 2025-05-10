@@ -8,9 +8,11 @@ export const styles = StyleSheet.create({
       padding: 16,
     },
     title: {
-      fontSize: 24,
-      fontWeight: "bold",
-      marginBottom: 16,
+      fontSize: 30,
+      fontWeight: 'bold',
+      color: '#000',
+      marginTop: 27,
+      marginBottom:10
     },
     searchContainer: {
       flexDirection: "row",
@@ -71,6 +73,13 @@ export const styles = StyleSheet.create({
       patientDetails: {
         fontSize: 14,
         color: "#666",
+      },
+
+      modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        
       },
 
   });
